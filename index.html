@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>ALPHA Register</title>
+<title>SBS X SQN Register</title>
 
 <style>
 body {
@@ -17,10 +17,25 @@ h1 {
   color: lime;
 }
 
+#syncStatus {
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.pageButtons {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.pageButtons button {
+  font-size: 18px;
+  padding: 10px 20px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
-  background: #00ff00;
   color: black;
   font-weight: bold;
 }
@@ -33,6 +48,18 @@ th, td {
 
 th {
   background: #00cc00;
+}
+
+tr.hq-row {
+  background: #ff0000;
+}
+
+tr.alpha-row {
+  background: #00ff00;
+}
+
+tr.sfsg-row {
+  background: #55aa44;
 }
 
 button {
@@ -71,24 +98,25 @@ button {
   background: #00b300;
   color: white;
 }
-
-#syncStatus {
-  text-align: center;
-  margin-bottom: 15px;
-  font-weight: bold;
-}
 </style>
 </head>
 
 <body>
 
-<h1>ALPHA Register</h1>
+<h1 id="pageTitle">ALPHA Register</h1>
 
 <div id="syncStatus">Connecting...</div>
+
+<div class="pageButtons">
+  <button onclick="setPage('HQ')">HQ</button>
+  <button onclick="setPage('ALPHA')">ALPHA</button>
+  <button onclick="setPage('SFSG')">SFSG</button>
+</div>
 
 <table>
   <thead>
     <tr>
+      <th>Section</th>
       <th>Rank</th>
       <th>Discord</th>
       <th>Callsign</th>
@@ -102,12 +130,10 @@ button {
   <tbody id="register"></tbody>
 </table>
 
-<!-- Firebase scripts -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <script>
-/* PASTE YOUR FIREBASE CONFIG HERE */
 const firebaseConfig = {
   apiKey: "AIzaSyB8YIbmSBQHx2zGWlu9onNkhnT5KdMJc80",
   authDomain: "xsqn-register.firebaseapp.com",
@@ -121,31 +147,93 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const registerRef = db.ref("milsimRegisters/sbsXSqnRegister");
 
-const registerRef = db.ref("milsimRegisters/alphaRegister");
+let currentPage = "ALPHA";
+
+function getPageFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const page = params.get("page");
+
+  if (page) {
+    const cleanPage = page.toUpperCase();
+
+    if (cleanPage === "HQ" || cleanPage === "ALPHA" || cleanPage === "SFSG") {
+      currentPage = cleanPage;
+    }
+  }
+
+  document.getElementById("pageTitle").innerText = currentPage + " Register";
+}
 
 const members = [
-  ["Acting Corporal", "dakota_kiwi [Dakota]", "VA1", ""],
-  ["Lance Corporal", "", "VA2", ""],
-  ["Marine", "soap1336", "VA3", ""],
-  ["Marine", "", "VA4", ""],
-  ["Marine", "", "VA5", ""],
-  ["Marine", "r6majesty [Steiny]", "VA6", ""],
+  ["HQ", "LT COL", "Asdabag300 [ASDA]", "V11", ""],
+  ["HQ", "Major", "Stevenr1995 [Steven]", "V12", ""],
+  ["HQ", "Lieutenant", "beanbo_bagins [Bagins]", "VS1", ""],
+  ["HQ", "2 Lieutenant", "bumjellybill [Jimmy]", "VM1", "EOD"],
+  ["HQ", "Warrent Officer 1", "septinox [Saber]", "VR2", "Lead Medic"],
 
-  ["Acting Sergeant", "tiktok_smokezy120 [Smokey]", "VB1", ""],
-  ["Lance Corporal", "", "VB2", ""],
-  ["Marine", "", "VB3", ""],
-  ["Marine", "leanchuck", "VB4", ""],
-  ["Marine", "", "VB5", ""],
-  ["Marine", "", "VB6", ""]
+  ["ALPHA", "Acting Corporal", "dakota_kiwi [Dakota]", "VA1", ""],
+  ["ALPHA", "Lance Corporal", "", "VA2", ""],
+  ["ALPHA", "Marine", "soap1336", "VA3", ""],
+  ["ALPHA", "Marine", "", "VA4", ""],
+  ["ALPHA", "Marine", "", "VA5", ""],
+  ["ALPHA", "Marine", "r6majesty [Steiny]", "VA6", ""],
+  ["ALPHA", "Acting Sergeant", "tiktok_smokezy120 [Smokey]", "VB1", ""],
+  ["ALPHA", "Lance Corporal", "mrbeanz3261 [Harry]", "VB2", ""],
+  ["ALPHA", "Marine", "turbine98 [Turbine]", "VB3", ""],
+  ["ALPHA", "Marine", "leanchuck", "VB4", ""],
+  ["ALPHA", "Marine", "", "VB5", ""],
+  ["ALPHA", "Marine", "", "VB6", ""],
+
+  ["ALPHA", "", "", "VA7", ""],
+  ["ALPHA", "", "", "VA8", ""],
+  ["ALPHA", "", "", "VA9", ""],
+  ["ALPHA", "", "", "VA10", ""],
+  ["ALPHA", "", "", "VA11", ""],
+  ["ALPHA", "", "", "VA12", ""],
+  ["ALPHA", "", "", "VA13", ""],
+  ["ALPHA", "", "", "VA14", ""],
+  ["ALPHA", "", "", "VA15", ""],
+  ["ALPHA", "", "", "VA16", ""],
+
+  ["SFSG", "Marine", "dale099472 [Medix]", "C1", "UNWHITELISTED"],
+  ["SFSG", "Marine", "specs2378. [Specs]", "C2", ""],
+  ["SFSG", "Marine", "devilz0054 [Devils]", "C3", "UNWHITELISTED"],
+  ["SFSG", "Marine", "hifx4 [Fox]", "C4", "UNWHITELISTED"],
+  ["SFSG", "Marine", "goose0141 [Goose]", "C5", "UNWHITELISTED"],
+  ["SFSG", "Marine", "Misanthropy [Yager]", "C6", "UNWHITELISTED"],
+
+  ["SFSG", "", "", "C7", ""],
+  ["SFSG", "", "", "C8", ""],
+  ["SFSG", "", "", "C9", ""],
+  ["SFSG", "", "", "C10", ""],
+  ["SFSG", "", "", "C11", ""]
 ];
 
 let data = {};
+
+function setPage(page) {
+  currentPage = page;
+
+  const newUrl = window.location.pathname + "?page=" + page.toLowerCase();
+  window.history.pushState({}, "", newUrl);
+
+  document.getElementById("pageTitle").innerText = page + " Register";
+
+  render();
+}
 
 function getColourClass(percent) {
   if (percent < 75) return "red";
   if (percent < 85) return "amber";
   return "green";
+}
+
+function getRowClass(section) {
+  if (section === "HQ") return "hq-row";
+  if (section === "SFSG") return "sfsg-row";
+  return "alpha-row";
 }
 
 function mark(callsign, result) {
@@ -174,35 +262,40 @@ function render() {
   const tbody = document.getElementById("register");
   tbody.innerHTML = "";
 
-  members.forEach(member => {
-    const [rank, discord, callsign, role] = member;
+  members
+    .filter(member => member[0] === currentPage)
+    .forEach(member => {
+      const [section, rank, discord, callsign, role] = member;
 
-    const stats = data[callsign] || { attended: 0, total: 0 };
+      const stats = data[callsign] || { attended: 0, total: 0 };
 
-    const attended = stats.attended || 0;
-    const total = stats.total || 0;
-    const percentNum = total === 0 ? 0 : Math.round((attended / total) * 100);
-    const percent = percentNum + "%";
-    const colourClass = getColourClass(percentNum);
+      const attended = stats.attended || 0;
+      const total = stats.total || 0;
+      const percentNum = total === 0 ? 0 : Math.round((attended / total) * 100);
+      const colourClass = getColourClass(percentNum);
+      const rowClass = getRowClass(section);
 
-    tbody.innerHTML += `
-      <tr>
-        <td>Rank: ${rank}</td>
-        <td>Discord: ${discord}</td>
-        <td>Callsign: ${callsign}</td>
-        <td>Role: ${role}</td>
-        <td>
-          <button class="present" onclick="mark('${callsign}', 'present')">Present</button>
-          <button class="absent" onclick="mark('${callsign}', 'absent')">Absent</button>
-          <button class="clear" onclick="clearPerson('${callsign}')">Reset</button>
-        </td>
-        <td>${attended}</td>
-        <td>${total}</td>
-        <td class="${colourClass}">${percent}</td>
-      </tr>
-    `;
-  });
+      tbody.innerHTML += `
+        <tr class="${rowClass}">
+          <td>${section}</td>
+          <td>Rank: ${rank}</td>
+          <td>Discord: ${discord}</td>
+          <td>Callsign: ${callsign}</td>
+          <td>Role: ${role}</td>
+          <td>
+            <button class="present" onclick="mark('${callsign}', 'present')">Present</button>
+            <button class="absent" onclick="mark('${callsign}', 'absent')">Absent</button>
+            <button class="clear" onclick="clearPerson('${callsign}')">Reset</button>
+          </td>
+          <td>${attended}</td>
+          <td>${total}</td>
+          <td class="${colourClass}">${percentNum}%</td>
+        </tr>
+      `;
+    });
 }
+
+getPageFromURL();
 
 registerRef.on("value", snapshot => {
   data = snapshot.val() || {};
