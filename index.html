@@ -60,11 +60,14 @@ th, td {
   text-align: center;
 }
 
-th { background: #00cc00; }
+th {
+  background: #00cc00;
+}
 
 .hq-row { background: #ff4d4d; }
 .alpha-row { background: #00ff00; }
 .sfsg-row { background: #66cc66; }
+.aviation-row { background: #66a3ff; }
 </style>
 </head>
 
@@ -84,6 +87,7 @@ th { background: #00cc00; }
   <button type="button" onclick="setPage('HQ')">HQ</button>
   <button type="button" onclick="setPage('ALPHA')">ALPHA</button>
   <button type="button" onclick="setPage('SFSG')">SFSG</button>
+  <button type="button" onclick="setPage('AVIATION')">AVIATION</button>
 </div>
 
 <table>
@@ -100,6 +104,7 @@ th { background: #00cc00; }
   <th>%</th>
 </tr>
 </thead>
+
 <tbody id="register"></tbody>
 </table>
 
@@ -119,6 +124,7 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.database();
 const registerRef = db.ref("milsimRegisters/sbsXSqnRegister");
 
@@ -129,12 +135,15 @@ let isAdmin = false;
 const ADMIN_PASSWORD = "TANGOPAPA1155";
 
 const members = [
+
+  // HQ
   ["HQ","LT COL","Asdabag300 [ASDA]","V11",""],
   ["HQ","Major","Stevenr1995 [Steven]","V12",""],
   ["HQ","Lieutenant","beanbo_bagins [Bagins]","VS1",""],
   ["HQ","2 Lieutenant","bumjellybill [Jimmy]","VM1","EOD"],
   ["HQ","Warrent Officer 1","septinox [Saber]","VR2","Lead Medic"],
 
+  // ALPHA
   ["ALPHA","Acting Corporal","dakota_kiwi [Dakota]","VA1",""],
   ["ALPHA","Lance Corporal","","VA2",""],
   ["ALPHA","Marine","soap1336 [Shampoo]","VA3",""],
@@ -159,6 +168,7 @@ const members = [
   ["ALPHA","","","VA15",""],
   ["ALPHA","","","VA16",""],
 
+  // SFSG
   ["SFSG","Marine","dale099472 [Medix]","C1","UNWHITELISTED"],
   ["SFSG","Marine","specs2378. [Specs]","C2",""],
   ["SFSG","Marine","devilz0054 [Devils]","C3","UNWHITELISTED"],
@@ -170,7 +180,15 @@ const members = [
   ["SFSG","","","C8",""],
   ["SFSG","","","C9",""],
   ["SFSG","","","C10",""],
-  ["SFSG","","","C11",""]
+  ["SFSG","","","C11",""],
+
+  // AVIATION
+  ["AVIATION","","","A1",""],
+  ["AVIATION","","","A2",""],
+  ["AVIATION","","","A3",""],
+  ["AVIATION","","","A4",""],
+  ["AVIATION","","","A5",""]
+
 ];
 
 function unlockEditing() {
@@ -193,18 +211,32 @@ function getPageFromURL() {
   if (page) {
     const cleanPage = page.toUpperCase();
 
-    if (cleanPage === "HQ" || cleanPage === "ALPHA" || cleanPage === "SFSG") {
+    if (
+      cleanPage === "HQ" ||
+      cleanPage === "ALPHA" ||
+      cleanPage === "SFSG" ||
+      cleanPage === "AVIATION"
+    ) {
       currentPage = cleanPage;
     }
   }
 
-  document.getElementById("pageTitle").innerText = currentPage + " Register";
+  document.getElementById("pageTitle").innerText =
+    currentPage + " Register";
 }
 
 function setPage(page) {
   currentPage = page;
-  window.history.pushState({}, "", "?page=" + page.toLowerCase());
-  document.getElementById("pageTitle").innerText = page + " Register";
+
+  window.history.pushState(
+    {},
+    "",
+    "?page=" + page.toLowerCase()
+  );
+
+  document.getElementById("pageTitle").innerText =
+    page + " Register";
+
   render();
 }
 
@@ -217,13 +249,16 @@ function getColour(percent) {
 function getRowClass(section) {
   if (section === "HQ") return "hq-row";
   if (section === "SFSG") return "sfsg-row";
+  if (section === "AVIATION") return "aviation-row";
   return "alpha-row";
 }
 
 function mark(callsign, type) {
+
   if (!isAdmin) return;
 
-  const current = data[callsign] || { attended: 0, total: 0 };
+  const current =
+    data[callsign] || { attended: 0, total: 0 };
 
   if (type === "present") {
     current.attended++;
@@ -238,71 +273,121 @@ function mark(callsign, type) {
 }
 
 function clearPerson(callsign) {
+
   if (!isAdmin) return;
 
-  const confirmReset = confirm("Reset attendance for " + callsign + "?");
+  const confirmReset = confirm(
+    "Reset attendance for " + callsign + "?"
+  );
 
   if (confirmReset) {
+
     registerRef.child(callsign).set({
       attended: 0,
       total: 0
     });
+
   }
 }
 
 function render() {
+
   const tbody = document.getElementById("register");
+
   tbody.innerHTML = "";
 
   members
     .filter(member => member[0] === currentPage)
     .forEach(member => {
+
       const section = member[0];
       const rank = member[1];
       const discord = member[2];
       const callsign = member[3];
       const role = member[4];
 
-      const stats = data[callsign] || { attended: 0, total: 0 };
+      const stats =
+        data[callsign] || { attended: 0, total: 0 };
+
       const attended = stats.attended || 0;
       const total = stats.total || 0;
-      const percent = total === 0 ? 0 : Math.round((attended / total) * 100);
+
+      const percent =
+        total === 0
+          ? 0
+          : Math.round((attended / total) * 100);
 
       tbody.innerHTML += `
         <tr class="${getRowClass(section)}">
+
           <td>${section}</td>
           <td>${rank}</td>
           <td>${discord}</td>
           <td>${callsign}</td>
           <td>${role}</td>
+
           <td>
+
             ${
               isAdmin
               ? `
-                <button class="present" type="button" onclick="mark('${callsign}', 'present')">Present</button>
-                <button class="absent" type="button" onclick="mark('${callsign}', 'absent')">Absent</button>
-                <button class="clear" type="button" onclick="clearPerson('${callsign}')">Reset</button>
+                <button
+                  class="present"
+                  type="button"
+                  onclick="mark('${callsign}','present')"
+                >
+                  Present
+                </button>
+
+                <button
+                  class="absent"
+                  type="button"
+                  onclick="mark('${callsign}','absent')"
+                >
+                  Absent
+                </button>
+
+                <button
+                  class="clear"
+                  type="button"
+                  onclick="clearPerson('${callsign}')"
+                >
+                  Reset
+                </button>
               `
               : "🔒 Locked"
             }
+
           </td>
+
           <td>${attended}</td>
           <td>${total}</td>
-          <td class="${getColour(percent)}">${percent}%</td>
+
+          <td class="${getColour(percent)}">
+            ${percent}%
+          </td>
+
         </tr>
       `;
     });
+
 }
 
 getPageFromURL();
 
 registerRef.on("value", function(snapshot) {
+
   data = snapshot.val() || {};
-  document.getElementById("syncStatus").innerText = "Synced Online";
+
+  document.getElementById("syncStatus").innerText =
+    "Synced Online";
+
   render();
+
 });
 
 render();
+
 </script>
 
 </body>
