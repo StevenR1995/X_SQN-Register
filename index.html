@@ -106,7 +106,6 @@ th { background:#00cc00; }
   <th>Attended</th>
   <th>Total</th>
   <th>%</th>
-  <th>Save</th>
 </tr>
 </thead>
 <tbody id="register"></tbody>
@@ -328,7 +327,15 @@ function safeValue(value) {
 }
 
 function input(id, field, value) {
-  return `<input class="editInput" id="${field}_${id}" value="${safeValue(value)}">`;
+  return `
+    <input
+      class="editInput"
+      id="${field}_${id}"
+      value="${safeValue(value)}"
+      onchange="saveRow('${id}')"
+      onblur="saveRow('${id}')"
+    >
+  `;
 }
 
 function saveRow(id) {
@@ -412,14 +419,6 @@ function render() {
           <td>${attended}</td>
           <td>${total}</td>
           <td class="${getColour(percent)}">${percent}%</td>
-
-          <td>
-            ${
-              isAdmin
-              ? `<button class="save" onclick="saveRow('${member.id}')">Save Row</button>`
-              : "🔒"
-            }
-          </td>
         </tr>
       `;
     });
@@ -439,6 +438,17 @@ editsRef.on("value", function(snapshot) {
 });
 
 render();
+
+
+window.addEventListener("beforeunload", function () {
+  if (!isAdmin) return;
+
+  document.querySelectorAll(".editInput").forEach(el => {
+    const parts = el.id.split("_");
+    const id = parts.slice(1).join("_");
+    if (id) saveRow(id);
+  });
+});
 
 </script>
 
