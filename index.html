@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SBS X SQN Register</title>
+<title>16 Air Assault Brigade Register</title>
 
 <style>
 body { background:#111; font-family:Arial,sans-serif; color:white; padding:20px; }
@@ -43,10 +43,30 @@ th { background:#00cc00; }
 .amber { background:#ffbf00; color:black; }
 .green { background:#00b300; color:white; }
 
-.hq-row { background:#ff4d4d; }
-.alpha-row { background:#00ff00; }
-.sfsg-row { background:#66cc66; }
-.aviation-row { background:#66a3ff; }
+.hq-row {
+  background:#FFD700;
+  color:black;
+}
+
+.alpha-row {
+  background:#C0C0C0;
+  color:black;
+}
+
+.sfsg-row {
+  background:#000000;
+  color:white;
+}
+
+.aviation-row {
+  background:#66a3ff;
+  color:black;
+}
+
+.sfsg-row td {
+  border:2px solid white !important;
+  color:white;
+}
 
 .editInput {
   width:95%;
@@ -57,7 +77,7 @@ th { background:#00cc00; }
 
 <body>
 
-<h1 id="pageTitle">ALPHA Register</h1>
+<h1 id="pageTitle">PARAS Register</h1>
 
 <div id="syncStatus">Connecting...</div>
 
@@ -69,17 +89,17 @@ th { background:#00cc00; }
 
 <div class="pageButtons">
   <button type="button" onclick="setPage('HQ')">HQ</button>
-  <button type="button" onclick="setPage('ALPHA')">ALPHA</button>
-  <button type="button" onclick="setPage('SFSG')">SFSG</button>
+  <button type="button" onclick="setPage('ALPHA')">PARAS</button>
+  <button type="button" onclick="setPage('SFSG')">PATHFINDERS</button>
   <button type="button" onclick="setPage('AVIATION')">AVIATION</button>
 </div>
 
 <table>
 <thead>
 <tr>
-  <th>Section</th>
-  <th>Rank</th>
   <th>Discord</th>
+  <th>Rank</th>
+  <th>Battalion</th>
   <th>Callsign</th>
   <th>Role</th>
   <th>Mark</th>
@@ -122,53 +142,90 @@ let edits = {};
 const ADMIN_PASSWORD = "TANGOPAPA1155";
 
 const members = [
-  {id:"V11",section:"HQ",rank:"LT COL",discord:"Asdabag300 [ASDA]",callsign:"V11",role:""},
-  {id:"V12",section:"HQ",rank:"Major",discord:"Stevenr1995 [Steven]",callsign:"V12",role:""},
-  {id:"VS1",section:"HQ",rank:"Lieutenant",discord:"beanbo_bagins [Bagins]",callsign:"VS1",role:""},
-  {id:"VM1",section:"HQ",rank:"2 Lieutenant",discord:"bumjellybill [Jimmy]",callsign:"VM1",role:"EOD"},
-  {id:"VR2",section:"HQ",rank:"Warrent Officer 1",discord:"septinox [Saber]",callsign:"VR2",role:"Lead Medic"},
+  {id:"V11",section:"HQ",rank:"LT COL",discord:"Asdabag300 [ASDA]",callsign:"",role:"CO"},
+  {id:"V12",section:"HQ",rank:"Major",discord:"Stevenr1995 [Steven]",callsign:"",role:"OC"},
+  {id:"VS1",section:"HQ",rank:"Lieutenant",discord:"",callsign:"",role:""},
+  {id:"VM1",section:"HQ",rank:"2 Lieutenant",discord:"septinox [Saber]",callsign:"",role:"Lead Medic"},
+  {id:"VR2",section:"HQ",rank:"Warrent Officer 1",discord:"",callsign:"",role:""},
 
-  {id:"VA1",section:"ALPHA",rank:"Acting Corporal",discord:"dakota_kiwi [Dakota]",callsign:"VA1",role:""},
-  {id:"VA2",section:"ALPHA",rank:"Lance Corporal",discord:"",callsign:"VA2",role:""},
-  {id:"VA3",section:"ALPHA",rank:"Marine",discord:"soap1336 [Shampoo]",callsign:"VA3",role:""},
-  {id:"VA4",section:"ALPHA",rank:"Marine",discord:"",callsign:"VA4",role:""},
-  {id:"VA5",section:"ALPHA",rank:"Marine",discord:"",callsign:"VA5",role:""},
-  {id:"VA6",section:"ALPHA",rank:"Marine",discord:"r6majesty [Steiny]",callsign:"VA6",role:""},
-  {id:"VB1",section:"ALPHA",rank:"Acting Sergeant",discord:"tiktok_smokezy120 [Smokey]",callsign:"VB1",role:""},
-  {id:"VB2",section:"ALPHA",rank:"Lance Corporal",discord:"",callsign:"VB2",role:""},
-  {id:"VB3",section:"ALPHA",rank:"Marine",discord:"",callsign:"VB3",role:""},
-  {id:"VB4",section:"ALPHA",rank:"Marine",discord:"leanchuck [Chuck]",callsign:"VB4",role:""},
-  {id:"VB5",section:"ALPHA",rank:"Marine",discord:"",callsign:"VB5",role:""},
-  {id:"VB6",section:"ALPHA",rank:"Marine",discord:"statue4646 [Statue]",callsign:"VB6",role:""},
+  {id:"2PARA01",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA02",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA03",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA04",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA05",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA06",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA07",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA08",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA09",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA10",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA11",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA12",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA13",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA14",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA15",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA16",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA17",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA18",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA19",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA20",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA01",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA02",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA03",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA04",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA05",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA06",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA07",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA08",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA09",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA10",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA11",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA12",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA13",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA14",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA15",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA16",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA17",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA18",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA19",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"3PARA20",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA01",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA02",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA03",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA04",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA05",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA06",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA07",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA08",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA09",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA10",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA11",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA12",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA13",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA14",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA15",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA16",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA17",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA18",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA19",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"4PARA20",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
 
-  {id:"VA7",section:"ALPHA",rank:"",discord:"",callsign:"VA7",role:""},
-  {id:"VA8",section:"ALPHA",rank:"",discord:"",callsign:"VA8",role:""},
-  {id:"VA9",section:"ALPHA",rank:"",discord:"",callsign:"VA9",role:""},
-  {id:"VA10",section:"ALPHA",rank:"",discord:"",callsign:"VA10",role:""},
-  {id:"VA11",section:"ALPHA",rank:"",discord:"",callsign:"VA11",role:""},
-  {id:"VA12",section:"ALPHA",rank:"",discord:"",callsign:"VA12",role:""},
-  {id:"VA13",section:"ALPHA",rank:"",discord:"",callsign:"VA13",role:""},
-  {id:"VA14",section:"ALPHA",rank:"",discord:"",callsign:"VA14",role:""},
-  {id:"VA15",section:"ALPHA",rank:"",discord:"",callsign:"VA15",role:""},
-  {id:"VA16",section:"ALPHA",rank:"",discord:"",callsign:"VA16",role:""},
+  {id:"C1",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
+  {id:"C2",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
+  {id:"C3",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
+  {id:"C4",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
+  {id:"C5",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
+  {id:"C6",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
+  {id:"C7",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
+  {id:"C8",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
+  {id:"C9",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
+  {id:"C10",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
+  {id:"C11",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
 
-  {id:"C1",section:"SFSG",rank:"Marine",discord:"dale099472 [Medix]",callsign:"C1",role:"UNWHITELISTED"},
-  {id:"C2",section:"SFSG",rank:"Marine",discord:"specs2378. [Specs]",callsign:"C2",role:""},
-  {id:"C3",section:"SFSG",rank:"Marine",discord:"devilz0054 [Devils]",callsign:"C3",role:"UNWHITELISTED"},
-  {id:"C4",section:"SFSG",rank:"Marine",discord:"hifx4 [Fox]",callsign:"C4",role:"UNWHITELISTED"},
-  {id:"C5",section:"SFSG",rank:"Marine",discord:"goose0141 [Goose]",callsign:"C5",role:"UNWHITELISTED"},
-  {id:"C6",section:"SFSG",rank:"Marine",discord:"Misanthropy [Yager]",callsign:"C6",role:"UNWHITELISTED"},
-  {id:"C7",section:"SFSG",rank:"",discord:"",callsign:"C7",role:""},
-  {id:"C8",section:"SFSG",rank:"",discord:"",callsign:"C8",role:""},
-  {id:"C9",section:"SFSG",rank:"",discord:"",callsign:"C9",role:""},
-  {id:"C10",section:"SFSG",rank:"",discord:"",callsign:"C10",role:""},
-  {id:"C11",section:"SFSG",rank:"",discord:"",callsign:"C11",role:""},
-
-  {id:"A1",section:"AVIATION",rank:"",discord:"",callsign:"A1",role:""},
-  {id:"A2",section:"AVIATION",rank:"",discord:"",callsign:"A2",role:""},
-  {id:"A3",section:"AVIATION",rank:"",discord:"",callsign:"A3",role:""},
-  {id:"A4",section:"AVIATION",rank:"",discord:"",callsign:"A4",role:""},
-  {id:"A5",section:"AVIATION",rank:"",discord:"",callsign:"A5",role:""}
+  {id:"A1",section:"AVIATION",rank:"",discord:"",callsign:"",role:""},
+  {id:"A2",section:"AVIATION",rank:"",discord:"",callsign:"",role:""},
+  {id:"A3",section:"AVIATION",rank:"",discord:"",callsign:"",role:""},
+  {id:"A4",section:"AVIATION",rank:"",discord:"",callsign:"",role:""},
+  {id:"A5",section:"AVIATION",rank:"",discord:"",callsign:"",role:""}
 ];
 
 function unlockEditing() {
@@ -195,14 +252,44 @@ function getPageFromURL() {
     }
   }
 
-  document.getElementById("pageTitle").innerText = currentPage + " Register";
+  const pageNames = {
+    HQ: "HQ Register",
+    ALPHA: "PARAS Register",
+    SFSG: "PATHFINDERS Register",
+    AVIATION: "AVIATION Register"
+  };
+  document.getElementById("pageTitle").innerText = pageNames[currentPage];
+  updateHeaderColours(currentPage);
 }
 
 function setPage(page) {
   currentPage = page;
   window.history.pushState({}, "", "?page=" + page.toLowerCase());
-  document.getElementById("pageTitle").innerText = page + " Register";
+  const pageNames = {
+    HQ: "HQ Register",
+    ALPHA: "PARAS Register",
+    SFSG: "PATHFINDERS Register",
+    AVIATION: "AVIATION Register"
+  };
+  document.getElementById("pageTitle").innerText = pageNames[page];
+  updateHeaderColours(page);
   render();
+}
+
+
+function updateHeaderColours(page){
+  const headers = document.querySelectorAll("th");
+  let bg="#FFD700", fg="black", border="2px solid black";
+
+  if(page==="ALPHA"){ bg="#C0C0C0"; fg="black"; border="2px solid black"; }
+  if(page==="SFSG"){ bg="#000000"; fg="white"; border="2px solid white"; }
+  if(page==="AVIATION"){ bg="#66a3ff"; fg="black"; border="2px solid black"; }
+
+  headers.forEach(h=>{
+    h.style.background = bg;
+    h.style.color = fg;
+    h.style.border = border;
+  });
 }
 
 function getMember(member) {
@@ -248,14 +335,15 @@ function saveRow(id) {
   if (!isAdmin) return;
 
   const updated = {
-    section: document.getElementById("section_" + id).value.trim().toUpperCase(),
+    section: currentPage,
+    battalion: document.getElementById("battalion_" + id).value.trim().toUpperCase(),
     rank: document.getElementById("rank_" + id).value.trim(),
     discord: document.getElementById("discord_" + id).value.trim(),
     callsign: document.getElementById("callsign_" + id).value.trim(),
     role: document.getElementById("role_" + id).value.trim()
   };
 
-  if (!updated.section) updated.section = currentPage;
+  if (!updated.battalion) updated.battalion = currentPage;
 
   editsRef.child(id).set(updated);
 }
@@ -303,9 +391,9 @@ function render() {
 
       tbody.innerHTML += `
         <tr class="${getRowClass(member.section)}">
-          <td>${isAdmin ? input(member.id,"section",member.section) : safeText(member.section)}</td>
-          <td>${isAdmin ? input(member.id,"rank",member.rank) : safeText(member.rank)}</td>
           <td>${isAdmin ? input(member.id,"discord",member.discord) : safeText(member.discord)}</td>
+          <td>${isAdmin ? input(member.id,"rank",member.rank) : safeText(member.rank)}</td>
+          <td>${isAdmin ? input(member.id,"battalion",member.battalion || member.section) : safeText(member.battalion || member.section)}</td>
           <td>${isAdmin ? input(member.id,"callsign",member.callsign) : safeText(member.callsign)}</td>
           <td>${isAdmin ? input(member.id,"role",member.role) : safeText(member.role)}</td>
 
