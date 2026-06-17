@@ -38,6 +38,11 @@ th { background:#00cc00; }
 .absent { background:#ff3333; color:white; }
 .clear { background:#ddd; }
 .save { background:#00bfff; }
+.remove {
+  background:#cc0000;
+  color:white;
+}
+
 
 .red { background:#cc0000; color:white; }
 .amber { background:#ffbf00; color:black; }
@@ -72,6 +77,34 @@ th { background:#00cc00; }
   width:95%;
   box-sizing:border-box;
 }
+
+.sectionTableWrap {
+  margin-bottom:28px;
+}
+
+.sectionHeader {
+  background:#222;
+  color:white;
+  font-size:22px;
+  font-weight:bold;
+  padding:10px;
+  border:2px solid black;
+}
+
+.sectionHeader button {
+  float:right;
+  background:#00bfff;
+  color:black;
+}
+
+.sectionTable {
+  width:100%;
+  border-collapse:collapse;
+  color:black;
+  font-weight:bold;
+  margin-bottom:18px;
+}
+
 </style>
 </head>
 
@@ -94,22 +127,7 @@ th { background:#00cc00; }
   <button type="button" onclick="setPage('AVIATION')">AVIATION</button>
 </div>
 
-<table>
-<thead>
-<tr>
-  <th>Discord</th>
-  <th>Rank</th>
-  <th>Battalion</th>
-  <th>Callsign</th>
-  <th>Role</th>
-  <th>Mark</th>
-  <th>Attended</th>
-  <th>Total</th>
-  <th>%</th>
-</tr>
-</thead>
-<tbody id="register"></tbody>
-</table>
+<div id="register"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -132,13 +150,17 @@ const db = firebase.database();
 
 const attendanceRef = db.ref("milsimRegisters/sbsXSqnRegister");
 const editsRef = db.ref("milsimRegisters/sbsXSqnRosterEdits");
+const customRowsRef = db.ref("milsimRegisters/sbsXSqnCustomRows");
+const removedRowsRef = db.ref("milsimRegisters/sbsXSqnRemovedRows");
 
 let currentPage = "ALPHA";
 let isAdmin = false;
 let attendance = {};
 let edits = {};
+let customRows = {};
+let removedRows = {};
 
-const ADMIN_PASSWORD = "TANGOPAPA1155";
+const ADMIN_PASSWORD = "9143";
 
 const members = [
   {id:"V11",section:"HQ",rank:"LT COL",discord:"Asdabag300 [ASDA]",callsign:"",role:"CO"},
@@ -147,66 +169,20 @@ const members = [
   {id:"VM1",section:"HQ",rank:"2 Lieutenant",discord:"septinox [Saber]",callsign:"",role:"Lead Medic"},
   {id:"VR2",section:"HQ",rank:"Warrent Officer 1",discord:"",callsign:"",role:""},
 
-  {id:"2PARA01",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA02",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA03",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA04",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA05",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA06",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA07",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA08",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA09",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA10",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA11",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA12",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA13",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA14",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA15",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA16",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA17",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA18",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA19",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"2PARA20",section:"ALPHA",battalion:"2PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA01",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA02",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA03",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA04",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA05",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA06",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA07",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA08",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA09",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA10",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA11",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA12",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA13",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA14",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA15",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA16",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA17",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA18",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA19",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"3PARA20",section:"ALPHA",battalion:"3PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA01",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA02",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA03",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA04",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA05",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA06",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA07",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA08",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA09",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA10",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA11",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA12",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA13",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA14",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA15",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA16",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA17",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA18",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA19",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
-  {id:"4PARA20",section:"ALPHA",battalion:"4PARA",rank:"",discord:"",callsign:"",role:""},
+  {id:"2PARA01",section:"ALPHA",battalion:"2PARA",rank:"Corporal",discord:"Dakota_Kiwi [Dakota]",callsign:"",role:"Section Commander"},
+  {id:"2PARA02",section:"ALPHA",battalion:"2PARA",rank:"Lance Corporal",discord:"leanchuck [Chuck]",callsign:"",role:""},
+  {id:"2PARA03",section:"ALPHA",battalion:"2PARA",rank:"Private",discord:"soap1336 [Shampoo]",callsign:"",role:""},
+  {id:"2PARA04",section:"ALPHA",battalion:"2PARA",rank:"Private",discord:"vector10021 [Vector]",callsign:"",role:""},
+  {id:"2PARA05",section:"ALPHA",battalion:"2PARA",rank:"Private",discord:"dale099472 [Medix]",callsign:"",role:""},
+
+  {id:"3PARA01",section:"ALPHA",battalion:"3PARA",rank:"Corporal",discord:"r6majesty [Steiny]",callsign:"",role:""},
+  {id:"3PARA02",section:"ALPHA",battalion:"3PARA",rank:"Private",discord:"mikeyy_beames [Scooby]",callsign:"",role:""},
+  {id:"3PARA03",section:"ALPHA",battalion:"3PARA",rank:"Private",discord:"dream.demon11 [Dream]",callsign:"",role:""},
+  {id:"3PARA04",section:"ALPHA",battalion:"3PARA",rank:"Private",discord:"nimbus27189 [Nimbus]",callsign:"",role:""},
+
+  {id:"4PARA01",section:"ALPHA",battalion:"4PARA",rank:"Private",discord:"tiktok_smokezy120 [Smokey]",callsign:"",role:""},
+  {id:"4PARA02",section:"ALPHA",battalion:"4PARA",rank:"Private",discord:"goatedhartmann_64332 [Ace]",callsign:"",role:""},
+  {id:"4PARA03",section:"ALPHA",battalion:"4PARA",rank:"Private",discord:"goose0141 [Goose]",callsign:"",role:""},
 
   {id:"C1",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
   {id:"C2",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
@@ -219,6 +195,7 @@ const members = [
   {id:"C9",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
   {id:"C10",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
   {id:"C11",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
+  {id:"C12",section:"SFSG",rank:"",discord:"",callsign:"",role:""},
 
   {id:"A1",section:"AVIATION",rank:"",discord:"",callsign:"",role:""},
   {id:"A2",section:"AVIATION",rank:"",discord:"",callsign:"",role:""},
@@ -341,18 +318,79 @@ function input(id, field, value) {
 function saveRow(id) {
   if (!isAdmin) return;
 
+  const battalionEl = document.getElementById("battalion_" + id);
+  const rankEl = document.getElementById("rank_" + id);
+  const discordEl = document.getElementById("discord_" + id);
+  const callsignEl = document.getElementById("callsign_" + id);
+  const roleEl = document.getElementById("role_" + id);
+
   const updated = {
     section: currentPage,
-    battalion: document.getElementById("battalion_" + id).value.trim().toUpperCase(),
-    rank: document.getElementById("rank_" + id).value.trim(),
-    discord: document.getElementById("discord_" + id).value.trim(),
-    callsign: document.getElementById("callsign_" + id).value.trim(),
-    role: document.getElementById("role_" + id).value.trim()
+    battalion: battalionEl ? battalionEl.value.trim().toUpperCase() : currentPage,
+    rank: rankEl ? rankEl.value.trim() : "",
+    discord: discordEl ? discordEl.value.trim() : "",
+    callsign: callsignEl ? callsignEl.value.trim() : "",
+    role: roleEl ? roleEl.value.trim() : "",
+    addedRow: Boolean(customRows[id])
   };
 
   if (!updated.battalion) updated.battalion = currentPage;
 
-  editsRef.child(id).set(updated);
+  if (customRows[id]) {
+    customRows[id] = updated;
+    customRowsRef.child(id).set(updated).catch(function(error) {
+      alert("Could not save row: " + error.message);
+      console.error("Custom row save error:", error);
+    });
+  } else {
+    editsRef.child(id).set(updated).catch(function(error) {
+      alert("Could not save row: " + error.message);
+      console.error("Fixed row save error:", error);
+    });
+  }
+}
+
+function addLine(battalion) {
+  if (!isAdmin) {
+    alert("Unlock editing first.");
+    return;
+  }
+
+  const id = battalion + "_" + Date.now();
+
+  const newRow = {
+    section: "ALPHA",
+    battalion: battalion,
+    rank: "",
+    discord: "",
+    callsign: "",
+    role: "",
+    addedRow: true
+  };
+
+  // Show the new row instantly on screen.
+  customRows[id] = newRow;
+  attendance[id] = { attended: 0, total: 0 };
+  render();
+
+  // Save the new row online.
+  customRowsRef.child(id).set(newRow).catch(function(error) {
+    alert("Could not add row to Firebase: " + error.message);
+    console.error("Add row Firebase error:", error);
+  });
+
+  attendanceRef.child(id).set({
+    attended: 0,
+    total: 0
+  }).catch(function(error) {
+    console.error("Attendance row create error:", error);
+  });
+
+  // Focus the Discord box after the row appears.
+  setTimeout(function() {
+    const box = document.getElementById("discord_" + id);
+    if (box) box.focus();
+  }, 50);
 }
 
 function mark(id, type) {
@@ -361,68 +399,224 @@ function mark(id, type) {
   const current = attendance[id] || { attended:0, total:0 };
 
   if (type === "present") {
-    current.attended++;
-    current.total++;
+    current.attended = (current.attended || 0) + 1;
+    current.total = (current.total || 0) + 1;
   }
 
   if (type === "absent") {
-    current.total++;
+    current.attended = current.attended || 0;
+    current.total = (current.total || 0) + 1;
   }
 
-  attendanceRef.child(id).set(current);
+  attendance[id] = current;
+  render();
+
+  attendanceRef.child(id).set(current).catch(function(error) {
+    alert("Could not save attendance: " + error.message);
+    console.error("Attendance save error:", error);
+  });
 }
 
 function clearPerson(id) {
   if (!isAdmin) return;
 
-  if (confirm("Reset attendance for this row?")) {
-    attendanceRef.child(id).set({
-      attended:0,
-      total:0
+  const resetData = {
+    attended: 0,
+    total: 0
+  };
+
+  // Reset instantly on screen.
+  attendance[id] = resetData;
+  render();
+
+  // Save reset to Firebase.
+  attendanceRef.child(id).set(resetData).catch(function(error) {
+    alert("Could not reset attendance: " + error.message);
+    console.error("Attendance reset error:", error);
+  });
+}
+
+function removeRow(id, button) {
+  if (!isAdmin) return;
+
+  if (!confirm("Remove this row from the register?")) return;
+
+  // Remove the exact row this button is inside.
+  const rowEl = button ? button.closest("tr") : document.getElementById("row_" + id);
+  if (rowEl) rowEl.remove();
+
+  // If it was an added custom row, delete it fully from Firebase.
+  if (customRows[id]) {
+    delete customRows[id];
+    delete attendance[id];
+
+    customRowsRef.child(id).remove().catch(function(error) {
+      alert("Could not delete custom row: " + error.message);
+      console.error("Custom row delete error:", error);
     });
+
+    attendanceRef.child(id).remove().catch(function(error) {
+      console.error("Attendance delete error:", error);
+    });
+
+    return;
   }
+
+  // If it was a built-in row, hide it permanently.
+  removedRows[id] = true;
+
+  removedRowsRef.child(id).set(true).catch(function(error) {
+    alert("Could not remove row: " + error.message);
+    console.error("Remove row error:", error);
+  });
+}
+
+function hasDetails(member) {
+  return Boolean(
+    (member.discord && member.discord.trim()) ||
+    (member.rank && member.rank.trim()) ||
+    (member.callsign && member.callsign.trim()) ||
+    (member.role && member.role.trim())
+  );
+}
+
+function tableHeader() {
+  return `
+    <thead>
+      <tr>
+        <th>Discord</th>
+        <th>Rank</th>
+        <th>Battalion</th>
+        <th>Callsign</th>
+        <th>Role</th>
+        <th>Mark</th>
+        <th>Attended</th>
+        <th>Total</th>
+        <th>%</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+  `;
+}
+
+function renderRow(member) {
+  const stats = attendance[member.id] || { attended:0, total:0 };
+  const attended = stats.attended || 0;
+  const total = stats.total || 0;
+  const percent = total === 0 ? 0 : Math.round((attended / total) * 100);
+
+  return `
+    <tr id="row_${member.id}" class="${getRowClass(member.section)}">
+      <td>${isAdmin ? input(member.id,"discord",member.discord) : safeText(member.discord)}</td>
+      <td>${isAdmin ? input(member.id,"rank",member.rank) : safeText(member.rank)}</td>
+      <td>${isAdmin ? input(member.id,"battalion",member.battalion || member.section) : safeText(member.battalion || member.section)}</td>
+      <td>${isAdmin ? input(member.id,"callsign",member.callsign) : safeText(member.callsign)}</td>
+      <td>${isAdmin ? input(member.id,"role",member.role) : safeText(member.role)}</td>
+
+      <td>
+        ${
+          isAdmin
+          ? `
+            <button type="button" class="present" onclick="mark('${member.id}','present')">Present</button>
+            <button type="button" class="absent" onclick="mark('${member.id}','absent')">Absent</button>
+            <button type="button" class="clear" onclick="clearPerson('${member.id}')">Reset</button>
+          `
+          : "🔒 Locked"
+        }
+      </td>
+
+      <td>${attended}</td>
+      <td>${total}</td>
+      <td class="${getColour(percent)}">${percent}%</td>
+      <td>
+        ${
+          isAdmin
+          ? `<button type="button" class="remove" onclick="removeRow('${member.id}', this)">Remove Row</button>`
+          : "🔒"
+        }
+      </td>
+    </tr>
+  `;
+}
+
+function renderParaTable(battalion, rows) {
+  let html = `
+    <div class="sectionTableWrap">
+      <div class="sectionHeader">
+        ${battalion}
+        ${isAdmin ? `<button type="button" onclick="addLine('${battalion}')">+ Add New Row</button>` : ""}
+      </div>
+      <table class="sectionTable">
+        ${tableHeader()}
+        <tbody>
+  `;
+
+  rows.forEach(member => {
+    html += renderRow(member);
+  });
+
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  return html;
+}
+
+function renderNormalTable(rows) {
+  let html = `
+    <table class="sectionTable">
+      ${tableHeader()}
+      <tbody>
+  `;
+
+  rows.forEach(member => {
+    html += renderRow(member);
+  });
+
+  html += `
+      </tbody>
+    </table>
+  `;
+
+  return html;
 }
 
 function render() {
-  const tbody = document.getElementById("register");
-  tbody.innerHTML = "";
+  const container = document.getElementById("register");
+  container.innerHTML = "";
 
-  members
-    .map(getMember)
-    .filter(member => member.section === currentPage)
-    .forEach(member => {
-      const stats = attendance[member.id] || { attended:0, total:0 };
-      const attended = stats.attended || 0;
-      const total = stats.total || 0;
-      const percent = total === 0 ? 0 : Math.round((attended / total) * 100);
+  const fixedMembers = members.map(getMember);
+  const addedMembers = Object.entries(customRows).map(([id, row]) => ({ id, ...row, addedRow:true }));
+  const allMembers = [...fixedMembers, ...addedMembers].filter(member => !removedRows[member.id]);
 
-      tbody.innerHTML += `
-        <tr class="${getRowClass(member.section)}">
-          <td>${isAdmin ? input(member.id,"discord",member.discord) : safeText(member.discord)}</td>
-          <td>${isAdmin ? input(member.id,"rank",member.rank) : safeText(member.rank)}</td>
-          <td>${isAdmin ? input(member.id,"battalion",member.battalion || member.section) : safeText(member.battalion || member.section)}</td>
-          <td>${isAdmin ? input(member.id,"callsign",member.callsign) : safeText(member.callsign)}</td>
-          <td>${isAdmin ? input(member.id,"role",member.role) : safeText(member.role)}</td>
+  const pageMembers = allMembers.filter(member => member.section === currentPage);
 
-          <td>
-            ${
-              isAdmin
-              ? `
-                <button class="present" onclick="mark('${member.id}','present')">Present</button>
-                <button class="absent" onclick="mark('${member.id}','absent')">Absent</button>
-                <button class="clear" onclick="clearPerson('${member.id}')">Reset</button>
-              `
-              : "🔒 Locked"
-            }
-          </td>
+  if (currentPage === "ALPHA") {
+    ["2PARA", "3PARA", "4PARA"].forEach(battalion => {
+      const rows = pageMembers
+        .filter(member => (member.battalion || "").toUpperCase() === battalion)
+        .filter(member => member.addedRow || hasDetails(member));
 
-          <td>${attended}</td>
-          <td>${total}</td>
-          <td class="${getColour(percent)}">${percent}%</td>
-        </tr>
-      `;
+      container.innerHTML += renderParaTable(battalion, rows);
     });
+
+    updateHeaderColours(currentPage);
+    return;
+  }
+
+  let visibleRows = pageMembers;
+
+  // HQ can still hide fully empty rows, but PATHFINDERS and AVIATION show all empty slots ready to fill.
+  if (currentPage === "HQ") {
+    visibleRows = pageMembers.filter(member => member.addedRow || hasDetails(member));
+  }
+
+  container.innerHTML = renderNormalTable(visibleRows);
+  updateHeaderColours(currentPage);
 }
+
 
 getPageFromURL();
 
@@ -436,6 +630,21 @@ editsRef.on("value", function(snapshot) {
   edits = snapshot.val() || {};
   render();
 });
+
+customRowsRef.on("value", function(snapshot) {
+  customRows = snapshot.val() || {};
+  render();
+}, function(error) {
+  console.error("Custom rows Firebase error:", error);
+});
+
+removedRowsRef.on("value", function(snapshot) {
+  removedRows = snapshot.val() || {};
+  render();
+}, function(error) {
+  console.error("Removed rows Firebase error:", error);
+});
+
 
 render();
 
